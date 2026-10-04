@@ -444,6 +444,47 @@
     .oz-card .v, .oz-title { color: #000 !important; }
   }
 
+
+  /* Haftalık plan */
+  body.hide-tab-plan .tabbar a[data-tab="plan"] { display: none; }
+  .pl-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid var(--line); }
+  .pl-title { font-size: 1.2rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+  .pl-student { color: var(--muted); font-weight: 600; font-size: .92rem; margin-top: 2px; }
+  .pl-headedit, .pl-weekedit { margin-bottom: 12px; }
+  .pl-weeks { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .pl-weeks .chip[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .pl-range { font-size: .88rem; color: var(--muted); margin: 6px 0 12px; }
+  .pl-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; margin-top: 14px; }
+  .pl-day { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--card-alt); break-inside: avoid; }
+  .pl-day h3 { margin: 0 0 8px; font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; color: var(--accent); }
+  .pl-tasks { list-style: none; margin: 0; padding: 0; }
+  .pl-tasks li { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; }
+  .pl-tasks input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); flex: none; margin-top: 1px; cursor: pointer; }
+  .pl-tasks label { flex: 1; cursor: pointer; overflow-wrap: anywhere; line-height: 1.45; }
+  .pl-tasks li.done label { text-decoration: line-through; opacity: .5; }
+  .pl-tasks .fld { padding: 7px 10px; font-size: .88rem; }
+  .hl { background: #fff2ac; color: #3b2f00; padding: 1px 7px; border-radius: 5px; }
+  .icon-btn[aria-pressed="true"] { background: #fff2ac; }
+  .pl-notes { border: 2px dashed var(--accent); border-radius: 12px; padding: 12px 16px; margin-top: 16px; background: var(--card-alt); }
+  .pl-notes[hidden] { display: none; }
+  .pl-notes-h { font-weight: 700; margin-bottom: 6px; color: var(--accent); }
+  .pl-note { margin: 6px 0; font-size: .92rem; font-weight: 600; line-height: 1.5; }
+  .pl-track { width: 100%; min-width: 0; border-collapse: collapse; font-size: .92rem; }
+  .pl-track th, .pl-track td { text-transform: none; text-align: left; vertical-align: middle; }
+  .pl-track td { font-weight: 600; }
+  .pl-track td.pl-num { width: 30%; }
+  .pl-track td.pl-num .fld { padding: 8px 10px; max-width: 150px; }
+  .pl-track tfoot td { background: var(--soft); font-weight: 700; }
+  .pl-track td.pl-sum { color: var(--accent); font-size: 1.05rem; }
+  .pl-track td .fld { font-weight: 500; }
+  .pl-mini { font-size: .8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; margin: 0 6px; font-weight: 500; }
+  @media (max-width: 480px) {
+    .tabbar a { font-size: .62rem; padding: 8px 0; }
+    .tabbar .ico { font-size: 1.15rem; }
+    .pl-days { grid-template-columns: 1fr; }
+    .pl-track th, .pl-track td { padding: 8px 4px; }
+  }
+
   /* Sayfalar ve alt menü */
   .page { display: flex; flex-direction: column; align-items: center; gap: 32px; width: 100%; }
   .page[hidden] { display: none; }
@@ -587,6 +628,66 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
     </section>
 
     
+    </div>
+
+        <div class="page" id="page-plan" hidden>
+    <section class="homework wide" id="planSec" aria-labelledby="plh">
+      <div class="hw-head">
+        <h2 id="plh">Haftalık plan 📋</h2>
+        <span class="hw-count" id="plCount"></span>
+      </div>
+      <div class="hw-card">
+        <div class="pl-top">
+          <div>
+            <div class="pl-title" id="plTitle"></div>
+            <div class="pl-student" id="plStudent" hidden></div>
+          </div>
+          <div class="hw-tools no-print">
+            <button type="button" class="chip" id="plEdit">✏️ Planı düzenle</button>
+            <button type="button" class="chip" id="plPrint">🖨️ Yazdır</button>
+          </div>
+        </div>
+        <div class="pl-headedit exam-form no-print" id="plHeadEdit" hidden>
+          <input type="text" id="plTitleIn" class="fld" maxlength="60" placeholder="Başlık" aria-label="Plan başlığı">
+          <input type="text" id="plClassIn" class="fld" maxlength="20" placeholder="Sınıf (örn. 5-B)" aria-label="Sınıf">
+          <p class="hint wide" style="margin:0">Öğrenci adı Ayarlar'daki "Adın" kutusundan gelir.</p>
+        </div>
+        <div class="pl-weeks" id="plWeeks" role="group" aria-label="Hafta seç"></div>
+        <p class="pl-range" id="plRange"></p>
+        <div class="pl-weekedit exam-form no-print" id="plWeekEdit" hidden>
+          <input type="date" id="plStart" class="fld" aria-label="Haftanın başlangıcı">
+          <input type="date" id="plEnd" class="fld" aria-label="Haftanın bitişi">
+          <button type="button" class="chip wide" id="plWeekDel">Bu haftayı sil</button>
+        </div>
+        <div class="progress" aria-hidden="true"><span id="plBar"></span></div>
+        <div class="pl-days" id="plDays"></div>
+        <div class="pl-notes" id="plNotes"></div>
+      </div>
+    </section>
+
+    <section class="homework wide" id="planTrack" aria-labelledby="trh">
+      <div class="hw-head">
+        <h2 id="trh">Takip &amp; Toplam Soru / Sayfa Sayıları</h2>
+        <span class="hw-count" id="trWeek"></span>
+      </div>
+      <div class="hw-card">
+        <p class="hint" style="margin:0 0 10px">Sayıları yaz, kendiliğinden kaydolur. Her hafta için ayrı tutulur.</p>
+        <table class="pl-track">
+          <thead><tr><th>Ders / Durum</th><th>Okunan Sayfa Sayısı</th><th>Çözülen Soru Sayısı</th></tr></thead>
+          <tbody id="trBody"></tbody>
+          <tfoot id="trFoot"></tfoot>
+        </table>
+        <p class="empty" id="trEmpty" hidden>Satır yok. "Planı düzenle"ye basıp ders ekleyebilirsin.</p>
+        <div class="add-row no-print" id="trAddRow" style="margin-top:12px" hidden>
+          <input type="text" id="trNewName" class="fld" maxlength="40" placeholder="Yeni ders / satır" aria-label="Yeni satır adı">
+          <label class="pl-mini"><input type="checkbox" id="trNewPages"> sayfa sütunu</label>
+          <button type="button" class="chip" id="trNewAdd">Ekle</button>
+        </div>
+        <div class="hw-tools no-print" style="margin-top:12px">
+          <button type="button" class="chip" id="trClear">Bu haftanın sayılarını temizle</button>
+        </div>
+      </div>
+    </section>
     </div>
 
     <div class="page" id="page-canta" hidden>
@@ -862,6 +963,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
           <button type="button" class="chip" id="presetSimple">Sade görünüm</button>
           <button type="button" class="chip" id="presetAll">Tüm özellikler</button>
         </div>
+        <label class="set-row"><span>Plan sekmesi</span><input type="checkbox" class="switch" id="swTabPlan"></label>
         <label class="set-row"><span>Çanta sekmesi</span><input type="checkbox" class="switch" id="swTabCanta"></label>
         <label class="set-row"><span>Sınavlar sekmesi</span><input type="checkbox" class="switch" id="swTabSinav"></label>
         <label class="set-row"><span>Hayatım sekmesi</span><input type="checkbox" class="switch" id="swTabHayat"></label>
@@ -970,8 +1072,8 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
       <div class="wiz-step" data-step="3" hidden>
         <h2>Ders programın 📅</h2>
         <p class="hint" style="margin:0 0 12px">Hazır programı mı kullanalım, yoksa kendi programını mı girmek istersin?</p>
-        <button type="button" class="choice" data-prog="mine" aria-pressed="true"><b>Kendi programımı gireceğim</b><span>Boş başlar, sonra ders saatlerini ve derslerini yazarsın.</span></button>
-        <button type="button" class="choice" data-prog="ready" aria-pressed="false"><b>Hazır programı kullan</b><span>Örnek olarak 5/B programı yüklü gelir, istediğin zaman değiştirebilirsin.</span></button>
+        <button type="button" class="choice" data-prog="mine" aria-pressed="true"><b>Kendi programımı gireceğim</b><span>Ders programı ve haftalık plan boş başlar, sonra kendin doldurursun.</span></button>
+        <button type="button" class="choice" data-prog="ready" aria-pressed="false"><b>Hazır programı kullan</b><span>Örnek olarak 5/B ders programı ve haftalık çalışma planı yüklü gelir, istediğin zaman değiştirebilirsin.</span></button>
       </div>
       <div class="wiz-step" data-step="4" hidden>
         <h2>Veli şifresi 🔒</h2>
@@ -997,8 +1099,9 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <nav class="tabbar" aria-label="Ana menü">
-    <a href="#ana" data-tab="ana"><span class="ico" aria-hidden="true">🏠</span><span>Ana Sayfa</span></a>
+    <a href="#ana" data-tab="ana"><span class="ico" aria-hidden="true">🏠</span><span>Ana</span></a>
     <a href="#odev" data-tab="odev"><span class="ico" aria-hidden="true">📚<b class="badge" id="navHwBadge" hidden></b></span><span>Ödevler</span></a>
+    <a href="#plan" data-tab="plan"><span class="ico" aria-hidden="true">📋</span><span>Plan</span></a>
     <a href="#canta" data-tab="canta"><span class="ico" aria-hidden="true">🎒</span><span>Çanta</span></a>
     <a href="#sinav" data-tab="sinav"><span class="ico" aria-hidden="true">📝</span><span>Sınavlar</span></a>
     <a href="#hayat" data-tab="hayat"><span class="ico" aria-hidden="true">🌟</span><span>Hayatım</span></a>
@@ -1585,7 +1688,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   var DEFAULTS = {
     title: "Hoşgeldin", name: "", avatar: "", theme: "pembe",
     now: true, summary: true, schedule: true, search: true, newTab: true, safe: true,
-    tabs: { canta: true, sinav: true, hayat: true },
+    tabs: { plan: true, canta: true, sinav: true, hayat: true },
     sec: { timer: true, habit: true, books: true, diary: true, count: true, badge: true, grades: true },
     pin: "", rec: ""
   };
@@ -1602,7 +1705,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
 
   var toggles = { setNow: "now", setSummary: "summary", setSchedule: "schedule", setSearch: "search", setNewTab: "newTab", setSafe: "safe" };
   var nested = {
-    swTabCanta: ["tabs", "canta"], swTabSinav: ["tabs", "sinav"], swTabHayat: ["tabs", "hayat"],
+    swTabPlan: ["tabs", "plan"], swTabCanta: ["tabs", "canta"], swTabSinav: ["tabs", "sinav"], swTabHayat: ["tabs", "hayat"],
     swSecTimer: ["sec", "timer"], swSecHabit: ["sec", "habit"], swSecBooks: ["sec", "books"], swSecDiary: ["sec", "diary"],
     swSecCount: ["sec", "count"], swSecBadge: ["sec", "badge"], swSecGrades: ["sec", "grades"]
   };
@@ -1648,9 +1751,9 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   Object.keys(nested).forEach(function (id) {
     byId(id).addEventListener("change", function () { cfg[nested[id][0]][nested[id][1]] = byId(id).checked; commit(); });
   });
-  byId("presetSimple").onclick = function () { cfg.tabs = { canta: true, sinav: false, hayat: false }; commit(); say("Sade görünüm açıldı ✅"); };
+  byId("presetSimple").onclick = function () { cfg.tabs = { plan: true, canta: true, sinav: false, hayat: false }; commit(); say("Sade görünüm açıldı ✅"); };
   byId("presetAll").onclick = function () {
-    cfg.tabs = { canta: true, sinav: true, hayat: true };
+    cfg.tabs = { plan: true, canta: true, sinav: true, hayat: true };
     cfg.sec = { timer: true, habit: true, books: true, diary: true, count: true, badge: true, grades: true };
     commit(); say("Tüm özellikler açıldı ✅");
   };
@@ -1744,7 +1847,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   };
 
   /* ---------- Sayfa yönlendirme ---------- */
-  var PAGES = ["ana", "odev", "canta", "sinav", "hayat", "ayarlar", "programduzenle", "ozet"];
+  var PAGES = ["ana", "odev", "plan", "canta", "sinav", "hayat", "ayarlar", "programduzenle", "ozet"];
   var GATED = ["ayarlar", "programduzenle"];
   var header = document.querySelector("header");
 
@@ -1760,7 +1863,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   function show() {
     var h = (location.hash || "").replace("#", "");
     if (PAGES.indexOf(h) === -1) h = "ana";
-    if ((h === "canta" || h === "sinav" || h === "hayat") && cfg.tabs[h] === false) h = "ana";
+    if ((h === "plan" || h === "canta" || h === "sinav" || h === "hayat") && cfg.tabs[h] === false) h = "ana";
     if (GATED.indexOf(h) !== -1 && cfg.pin) {
       if (!isUnlocked()) {
         showPage("ana");
@@ -2419,6 +2522,7 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
       ML.setProgram(p);
     }
     try { store.setItem("ruken_kurulum", "1"); } catch (e) {}
+    if (ML.planReset) { if (wiz.prog === "ready") ML.planReset("example"); else if (wiz.prog === "mine") ML.planReset("blank"); }
     wizClose();
     toast("Hazırsın! 🎉");
     if (wiz.prog === "mine") location.hash = "#programduzenle";
@@ -2589,6 +2693,14 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
     grid.appendChild(card("Okunan sayfa", pages, "son 7 gün"));
     grid.appendChild(card("Ödev serisi", streakOf(hw) + " gün", "üst üste"));
     box.appendChild(grid);
+    var ps = ML.planSummary && ML.planSummary();
+    if (ps && ps.total) {
+      listBlock(box, "Haftalık çalışma planı — " + ps.label, [
+        "Tamamlanan madde: " + ps.done + "/" + ps.total,
+        "Çözülen soru (plan takibi): " + ps.q,
+        "Okunan sayfa (plan takibi): " + ps.pages
+      ].concat(ps.lines), "");
+    }
 
     listBlock(box, "Bekleyen ödevler", open.slice().sort(function (a, b) { return (a.date || "9").localeCompare(b.date || "9"); }).slice(0, 10).map(function (x) {
       return x.subject + ": " + x.text + (x.date ? " — " + trShort(x.date) + (x.date < t ? " (gecikmiş)" : "") : "");
@@ -2643,6 +2755,304 @@ try { window.__fresh = true; for (var i = 0; i < localStorage.length; i++) { if 
   });
   renderBooks(); renderCountdown();
   setInterval(renderCountdown, 3600000);
+})();
+</script>
+<script>
+(function () {
+  var ML = window.ML; if (!ML) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var store = null; try { store = window.localStorage; } catch (e) {}
+  var KEY = "ruken_plan";
+  var DAYN = ["", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+  function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function uid() { return "p" + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
+  function today() { return ML.toISO(new Date()); }
+  function addDays(s, n) { var x = new Date(s + "T00:00:00"); x.setDate(x.getDate() + n); return ML.toISO(x); }
+  function dmy(s) { var a = s.split("-"); return a[2] + " / " + a[1] + " / " + a[0]; }
+  function num(v) { var n = parseFloat(v); return isNaN(n) || n < 0 ? 0 : n; }
+  function toast(m) { if (ML.toast) ML.toast(m); }
+
+  /* ---------- Hazır örnek ve boş plan ---------- */
+  function examplePlan() {
+    var c = 0;
+    function T(text, hl) { c++; return { id: "e" + c, text: text, hl: !!hl }; }
+    var read20 = "Kitap okuma (en az 20 dk)", read30 = "Kitap okuma (en az 30 dk)";
+    return {
+      title: "Haftalık Planlayıcı", klass: "5-B",
+      weeks: [{ id: "w1", start: "2026-09-28", end: "2026-10-05" }, { id: "w2", start: "2026-10-05", end: "2026-10-12" }],
+      days: {
+        1: [T("İngilizce Konu Tekrarı + Varsa Ödev"), T("Türkçe Konu Tekrarı + en az 10 soru"), T(read20, 1)],
+        2: [T("Matematik Konu Tekrarı + en az 10 soru"), T("Fen Konu Tekrarı + en az 10 soru"), T("Türkçe Konu Tekrarı + 10 soru"), T(read20, 1)],
+        3: [T("Fen Konu Tekrarı + en az 10 soru"), T("İngilizce Konu Tekrarı"), T("Matematik K.T. + 10 soru"), T(read20, 1)],
+        4: [T("Türkçe K.T. + 10 soru"), T("Matematik K.T. + 10 soru"), T("Sosyal K.T. + 10 soru"), T(read20, 1)],
+        5: [T("Sosyal K.T. + 10 soru"), T("Fen K.T. + 10 soru"), T("Din Konu Tekrarı + Varsa Ödev"), T(read20, 1)],
+        6: [T("Varsa Ödev"), T(read30, 1)],
+        7: [T("Varsa Ödev"), T(read30, 1)]
+      },
+      notes: [
+        { id: "n1", text: "Kitap okumanın en az 10 dk'sı sesli olacak şekilde yapılmalıdır." },
+        { id: "n2", text: "Soru çözümü yaparken ilk olarak okul kaynakları tercih edilmelidir." }
+      ],
+      rows: [
+        { id: "r1", name: "Kitap Okuma", pages: true }, { id: "r2", name: "Fen Dersi", pages: false },
+        { id: "r3", name: "Matematik", pages: false }, { id: "r4", name: "Sosyal Bilgiler", pages: false }, { id: "r5", name: "Türkçe", pages: false }
+      ],
+      progress: {}
+    };
+  }
+  function blankPlan() {
+    var d = new Date(), wd = d.getDay() || 7; d.setDate(d.getDate() - (wd - 1));
+    var start = ML.toISO(d);
+    return {
+      title: "Haftalık Planlayıcı", klass: "",
+      weeks: [{ id: uid(), start: start, end: addDays(start, 7) }],
+      days: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] },
+      notes: [], rows: [{ id: uid(), name: "Kitap Okuma", pages: true }], progress: {}
+    };
+  }
+  function valid(p) {
+    return p && Array.isArray(p.weeks) && p.weeks.length && p.days && typeof p.days === "object" && Array.isArray(p.rows);
+  }
+  var plan = null;
+  try { plan = JSON.parse(store.getItem(KEY)); } catch (e) { plan = null; }
+  if (!valid(plan)) plan = examplePlan();
+  plan.notes = plan.notes || []; plan.progress = plan.progress || {}; plan.title = plan.title || "Haftalık Planlayıcı"; plan.klass = plan.klass || "";
+  for (var di = 1; di <= 7; di++) if (!Array.isArray(plan.days[di])) plan.days[di] = [];
+
+  function save() { try { store.setItem(KEY, JSON.stringify(plan)); } catch (e) {} }
+
+  /* ---------- Hafta yardımcıları ---------- */
+  var sel = null, editing = false;
+  function sortedWeeks() { return plan.weeks.slice().sort(function (a, b) { return a.start.localeCompare(b.start); }); }
+  function curWeek() {
+    var t = today(), ws = sortedWeeks(), pick = ws[0];
+    ws.forEach(function (w) { if (w.start <= t) pick = w; });
+    return pick;
+  }
+  function selWeek() {
+    var w = plan.weeks.filter(function (x) { return x.id === sel; })[0];
+    if (!w) { w = curWeek(); sel = w.id; }
+    return w;
+  }
+  function weekNo(w) { return sortedWeeks().indexOf(w) + 1; }
+  function progRead(id) { return plan.progress[id] || { done: {}, track: {} }; }
+  function prog(id) { var p = plan.progress[id] || (plan.progress[id] = { done: {}, track: {} }); p.done = p.done || {}; p.track = p.track || {}; return p; }
+  function allTasks() { var out = []; for (var d = 1; d <= 7; d++) plan.days[d].forEach(function (t) { out.push(t); }); return out; }
+
+  /* ---------- Çizim ---------- */
+  function renderHead() {
+    $("plTitle").textContent = plan.title;
+    var name = (ML.getCfg && ML.getCfg().name) || "";
+    var parts = [name, plan.klass].filter(Boolean).join(" · ");
+    $("plStudent").textContent = parts;
+    $("plStudent").hidden = !parts;
+    $("plEdit").textContent = editing ? "✔ Düzenlemeyi bitir" : "✏️ Planı düzenle";
+    $("plHeadEdit").hidden = !editing;
+    if (editing) {
+      if (document.activeElement !== $("plTitleIn")) $("plTitleIn").value = plan.title;
+      if (document.activeElement !== $("plClassIn")) $("plClassIn").value = plan.klass;
+    }
+  }
+
+  function renderWeeks() {
+    var box = $("plWeeks"); box.innerHTML = "";
+    var w = selWeek();
+    sortedWeeks().forEach(function (x, i) {
+      var b = mk("button", "chip", (i + 1) + ". Hafta"); b.type = "button";
+      b.setAttribute("aria-pressed", x.id === w.id ? "true" : "false");
+      b.onclick = function () { sel = x.id; renderAll(); };
+      box.appendChild(b);
+    });
+    var add = mk("button", "chip no-print", "+ Yeni hafta"); add.type = "button";
+    add.onclick = function () {
+      var last = sortedWeeks().pop(), start = last.end;
+      var nw = { id: uid(), start: start, end: addDays(start, 7) };
+      plan.weeks.push(nw); sel = nw.id; save(); renderAll(); toast("Yeni hafta eklendi 📋");
+    };
+    box.appendChild(add);
+    $("plRange").textContent = "Tarih aralığı: " + dmy(w.start) + " - " + dmy(w.end);
+    var we = $("plWeekEdit"); we.hidden = !editing;
+    if (editing) {
+      $("plStart").value = w.start; $("plEnd").value = w.end;
+      $("plWeekDel").hidden = plan.weeks.length <= 1;
+    }
+  }
+
+  function renderBar() {
+    var w = selWeek(), p = progRead(w.id), tasks = allTasks();
+    var done = tasks.filter(function (t) { return p.done[t.id]; }).length;
+    $("plBar").style.width = tasks.length ? Math.round(done / tasks.length * 100) + "%" : "0";
+    $("plCount").textContent = tasks.length ? done + "/" + tasks.length + " madde tamam" : "";
+  }
+
+  function renderDays() {
+    var box = $("plDays"); box.innerHTML = "";
+    var w = selWeek(), p = progRead(w.id);
+    for (var d = 1; d <= 7; d++) (function (d) {
+      var card = mk("div", "pl-day"); card.appendChild(mk("h3", null, DAYN[d]));
+      var ul = mk("ul", "pl-tasks");
+      plan.days[d].forEach(function (t) {
+        var li = mk("li", !editing && p.done[t.id] ? "done" : "");
+        if (!editing) {
+          var cb = mk("input"); cb.type = "checkbox"; cb.id = "pt_" + t.id; cb.checked = !!p.done[t.id];
+          var lb = mk("label"); lb.htmlFor = cb.id;
+          if (t.hl) lb.appendChild(mk("span", "hl", t.text)); else lb.textContent = t.text;
+          cb.onchange = function () {
+            var pp = prog(w.id);
+            if (cb.checked) pp.done[t.id] = true; else delete pp.done[t.id];
+            li.classList.toggle("done", cb.checked); save(); renderBar();
+          };
+          li.appendChild(cb); li.appendChild(lb);
+        } else {
+          var tx = mk("input", "fld"); tx.type = "text"; tx.maxLength = 120; tx.value = t.text; tx.setAttribute("aria-label", DAYN[d] + " maddesi");
+          tx.addEventListener("input", function () { t.text = tx.value; save(); });
+          var hl = mk("button", "icon-btn", "🖍"); hl.type = "button"; hl.title = "Sarı vurgu"; hl.setAttribute("aria-label", "Vurgula");
+          hl.setAttribute("aria-pressed", t.hl ? "true" : "false");
+          hl.onclick = function () { t.hl = !t.hl; save(); renderDays(); };
+          var del = mk("button", "icon-btn", "✕"); del.type = "button"; del.setAttribute("aria-label", "Maddeyi sil");
+          del.onclick = function () { plan.days[d] = plan.days[d].filter(function (x) { return x !== t; }); save(); renderAll(); };
+          li.appendChild(tx); li.appendChild(hl); li.appendChild(del);
+        }
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+      if (!plan.days[d].length && !editing) card.appendChild(mk("p", "hint", "Bu gün için madde yok."));
+      if (editing) {
+        var row = mk("div", "add-row"); row.style.marginTop = "8px";
+        var inp = mk("input", "fld"); inp.type = "text"; inp.maxLength = 120; inp.placeholder = "Yeni madde"; inp.setAttribute("aria-label", DAYN[d] + " yeni madde");
+        var ad = mk("button", "chip", "Ekle"); ad.type = "button";
+        function addTask() { var v = inp.value.trim(); if (!v) { inp.focus(); return; } plan.days[d].push({ id: uid(), text: v, hl: false }); save(); renderAll(); }
+        ad.onclick = addTask; inp.addEventListener("keydown", function (e) { if (e.key === "Enter") addTask(); });
+        row.appendChild(inp); row.appendChild(ad); card.appendChild(row);
+      }
+      box.appendChild(card);
+    })(d);
+  }
+
+  function renderNotes() {
+    var box = $("plNotes"); box.innerHTML = "";
+    box.hidden = !editing && !plan.notes.length;
+    if (box.hidden) return;
+    box.appendChild(mk("div", "pl-notes-h", "📌 Öğretmen / Çalışma Notları"));
+    plan.notes.forEach(function (n) {
+      if (!editing) { box.appendChild(mk("div", "pl-note", "📌 " + n.text)); return; }
+      var row = mk("div", "add-row"); row.style.margin = "6px 0";
+      var tx = mk("input", "fld"); tx.type = "text"; tx.maxLength = 200; tx.value = n.text; tx.setAttribute("aria-label", "Not");
+      tx.addEventListener("input", function () { n.text = tx.value; save(); });
+      var del = mk("button", "icon-btn", "✕"); del.type = "button"; del.setAttribute("aria-label", "Notu sil");
+      del.onclick = function () { plan.notes = plan.notes.filter(function (x) { return x !== n; }); save(); renderNotes(); };
+      row.appendChild(tx); row.appendChild(del); box.appendChild(row);
+    });
+    if (editing) {
+      var row = mk("div", "add-row"); row.style.marginTop = "8px";
+      var inp = mk("input", "fld"); inp.type = "text"; inp.maxLength = 200; inp.placeholder = "Yeni not"; inp.setAttribute("aria-label", "Yeni not");
+      var ad = mk("button", "chip", "Not ekle"); ad.type = "button";
+      function addNote() { var v = inp.value.trim(); if (!v) { inp.focus(); return; } plan.notes.push({ id: uid(), text: v }); save(); renderNotes(); }
+      ad.onclick = addNote; inp.addEventListener("keydown", function (e) { if (e.key === "Enter") addNote(); });
+      row.appendChild(inp); row.appendChild(ad); box.appendChild(row);
+    }
+  }
+
+  var totalCells = null;
+  function updateTotals() {
+    if (!totalCells) return;
+    var p = progRead(selWeek().id), pg = 0, q = 0;
+    plan.rows.forEach(function (r) { var t = p.track[r.id] || {}; if (r.pages) pg += num(t.p); q += num(t.q); });
+    totalCells.p.textContent = String(pg); totalCells.q.textContent = String(q);
+  }
+
+  function renderTrack() {
+    var w = selWeek(), p = progRead(w.id);
+    $("trWeek").textContent = weekNo(w) + ". Hafta · " + dmy(w.start) + " - " + dmy(w.end);
+    var body = $("trBody"); body.innerHTML = "";
+    plan.rows.forEach(function (r) {
+      var tr = mk("tr"), nameTd = mk("td");
+      if (editing) {
+        var nm = mk("input", "fld"); nm.type = "text"; nm.maxLength = 40; nm.value = r.name; nm.setAttribute("aria-label", "Ders adı");
+        nm.addEventListener("input", function () { r.name = nm.value; save(); });
+        var pgChk = mk("label", "pl-mini"); var pc = mk("input"); pc.type = "checkbox"; pc.checked = !!r.pages;
+        pc.onchange = function () { r.pages = pc.checked; save(); renderTrack(); };
+        pgChk.appendChild(pc); pgChk.appendChild(document.createTextNode(" sayfa sütunu"));
+        var del = mk("button", "icon-btn", "✕"); del.type = "button"; del.setAttribute("aria-label", "Satırı sil");
+        del.onclick = function () {
+          if (!confirm("\"" + r.name + "\" satırı silinsin mi?")) return;
+          plan.rows = plan.rows.filter(function (x) { return x !== r; }); save(); renderTrack();
+        };
+        nameTd.appendChild(nm); nameTd.appendChild(pgChk); nameTd.appendChild(del);
+      } else nameTd.textContent = r.name;
+      tr.appendChild(nameTd);
+      [["p", "Okunan sayfa", r.pages], ["q", "Çözülen soru", true]].forEach(function (c) {
+        var td = mk("td", "pl-num");
+        if (!c[2]) { td.textContent = "-"; tr.appendChild(td); return; }
+        var inp = mk("input", "fld"); inp.type = "number"; inp.min = "0"; inp.step = "1"; inp.inputMode = "numeric"; inp.placeholder = "0";
+        inp.setAttribute("aria-label", r.name + " - " + c[1]);
+        var cur = (p.track[r.id] || {})[c[0]]; inp.value = cur === undefined || cur === "" ? "" : cur;
+        inp.addEventListener("input", function () {
+          var pp = prog(w.id); pp.track[r.id] = pp.track[r.id] || {}; pp.track[r.id][c[0]] = inp.value;
+          save(); updateTotals();
+        });
+        td.appendChild(inp); tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+    var foot = $("trFoot"); foot.innerHTML = "";
+    var ft = mk("tr"); ft.appendChild(mk("td", null, "Toplam"));
+    var tp = mk("td", "pl-num pl-sum", "0"), tq = mk("td", "pl-num pl-sum", "0");
+    ft.appendChild(tp); ft.appendChild(tq); foot.appendChild(ft);
+    totalCells = { p: tp, q: tq }; updateTotals();
+    $("trEmpty").hidden = plan.rows.length > 0;
+    $("trAddRow").hidden = !editing;
+  }
+
+  function renderAll() { renderHead(); renderWeeks(); renderBar(); renderDays(); renderNotes(); renderTrack(); }
+
+  /* ---------- Düğmeler ---------- */
+  $("plEdit").onclick = function () { editing = !editing; renderAll(); if (!editing) toast("Plan kaydedildi ✅"); };
+  $("plPrint").onclick = function () { window.print(); };
+  $("plTitleIn").addEventListener("input", function () { plan.title = $("plTitleIn").value.trim() || "Haftalık Planlayıcı"; save(); $("plTitle").textContent = plan.title; });
+  $("plClassIn").addEventListener("input", function () { plan.klass = $("plClassIn").value.trim(); save(); renderHead(); });
+  function dateEdit() {
+    var w = selWeek(), s = $("plStart").value, e = $("plEnd").value;
+    if (!s || !e) return;
+    if (e <= s) { toast("Bitiş tarihi başlangıçtan sonra olmalı."); $("plEnd").value = w.end; return; }
+    w.start = s; w.end = e; save(); renderWeeks(); renderTrack();
+  }
+  $("plStart").addEventListener("change", dateEdit); $("plEnd").addEventListener("change", dateEdit);
+  $("plWeekDel").onclick = function () {
+    if (plan.weeks.length <= 1) return;
+    var w = selWeek();
+    if (!confirm(weekNo(w) + ". hafta ve bu haftaya ait işaretler ile takip sayıları silinsin mi?")) return;
+    plan.weeks = plan.weeks.filter(function (x) { return x !== w; }); delete plan.progress[w.id]; sel = null; save(); renderAll();
+  };
+  $("trClear").onclick = function () {
+    var w = selWeek();
+    if (!confirm(weekNo(w) + ". haftanın takip sayıları temizlensin mi?")) return;
+    var p = prog(w.id); p.track = {}; save(); renderTrack(); toast("Takip sayıları temizlendi.");
+  };
+  function addRow() {
+    var inp = $("trNewName"), v = inp.value.trim(); if (!v) { inp.focus(); return; }
+    plan.rows.push({ id: uid(), name: v, pages: $("trNewPages").checked });
+    inp.value = ""; $("trNewPages").checked = false; save(); renderTrack();
+  }
+  $("trNewAdd").onclick = addRow;
+  $("trNewName").addEventListener("keydown", function (e) { if (e.key === "Enter") addRow(); });
+
+  /* ---------- Dışarıya açılanlar ---------- */
+  ML.planReset = function (kind) { plan = kind === "example" ? examplePlan() : blankPlan(); sel = null; editing = false; save(); renderAll(); };
+  ML.planSummary = function () {
+    var w = curWeek(), p = progRead(w.id), tasks = allTasks();
+    var done = tasks.filter(function (t) { return p.done[t.id]; }).length, pages = 0, q = 0, lines = [];
+    plan.rows.forEach(function (r) {
+      var t = p.track[r.id] || {}, pv = r.pages ? num(t.p) : 0, qv = num(t.q);
+      pages += pv; q += qv;
+      var bits = []; if (pv) bits.push(pv + " sayfa"); if (qv) bits.push(qv + " soru");
+      if (bits.length) lines.push(r.name + ": " + bits.join(", "));
+    });
+    return { label: weekNo(w) + ". Hafta (" + dmy(w.start) + " - " + dmy(w.end) + ")", done: done, total: tasks.length, pages: pages, q: q, lines: lines };
+  };
+
+  document.addEventListener("mylife:page", function (e) { if (e.detail === "plan") { sel = null; renderAll(); } });
+  renderAll();
 })();
 </script>
 </body>
